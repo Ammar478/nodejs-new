@@ -1,5 +1,13 @@
 version: '3.8'
 services:
+    postgres:
+        image: postgres:12.2-alpine
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_DB: webapp_dev
+            POSTGRES_HOST_AUTH_METHOD: trust
+
     backend:
         build: .
         ports:
@@ -9,5 +17,8 @@ services:
             - .:/usr/src/app
             - /usr/src/app/node_modules
         command: npm run start:docker
+        depends_on:
+            - postgres
         environment:
+            DATABASE_URL: postgres://postgres@postgres:5432/webapp_dev
             PORT: '8080'

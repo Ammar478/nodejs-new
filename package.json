@@ -6,8 +6,12 @@
     "scripts": {
         "build": "rimraf dist & swc ./src -d dist",
         "start": "node dist/index.js",
-        "start:docker": "npm run build && npm run start",
-        "watch": "watchy --no-init-spawn --debounce 1 -w src -- docker compose restart backend"
+        "start:docker": "npm run build && node --inspect=0.0.0.0 dist/index.js",
+        "watch": "watchy --no-init-spawn --debounce 1 -w src -- docker compose restart backend",
+        "start:migrate:prod": "prisma migrate deploy && npm run start",
+        "db:console": "docker compose run postgres psql -h postgres -U postgres -d webapp_dev",
+        "docker:db:migrate": "docker compose run backend npx prisma migrate dev --name :latest",
+        "rebuild:be": "docker compose build backend && docker compose rm --force --stop backend && docker compose up -d backend"
     },
     "author": "",
     "license": "ISC",
@@ -15,6 +19,7 @@
         "node": "18.18.2"
     },
     "dependencies": {
+        "@prisma/client": "^5.5.2",
         "express": "^4.18.2",
         "morgan": "^1.10.0",
         "prettier": "^3.0.3",
@@ -30,6 +35,7 @@
         "@typescript-eslint/eslint-plugin": "^6.10.0",
         "@typescript-eslint/parser": "^6.10.0",
         "eslint": "^8.53.0",
+        "prisma": "^5.5.2",
         "rimraf": "^5.0.5",
         "watchy": "^0.10.1"
     }
